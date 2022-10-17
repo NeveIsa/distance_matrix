@@ -7,7 +7,7 @@ from loguru import logger
 
 
 def RMSE(X, Y):
-    return np.linalg.norm(X - Y)
+    return np.linalg.norm(X - Y) / X.shape[0]
 
 
 def main(inputdir):
