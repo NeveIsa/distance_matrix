@@ -16,7 +16,7 @@ def process():
 		python 2mds.py @(ds)
 		python 3align.py @(ds)
 		python 4plot.py @(ds)
-		feh @(ds)/compare.png
+		feh @(ds)/4compare.png
 		print()
 
 # MAIN #

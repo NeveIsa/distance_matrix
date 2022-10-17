@@ -26,7 +26,7 @@ def main(inputdir):
     )
     plt.title(f"rmse: {error}")
 
-    outfile = inputdir / "compare.png"
+    outfile = inputdir / "4compare.png"
     plt.savefig(outfile)
 
     logger.info(f"plotted {outfile}")

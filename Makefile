@@ -12,3 +12,8 @@ black:
 	
 cleandata:
 	rm -rf distancedata/*
+
+commit:
+	git add .
+	git commit -m updates
+	git push
