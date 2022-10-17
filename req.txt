@@ -1,0 +1,8 @@
+numpy
+fire
+loguru
+pyyaml
+matplotlib
+seaborn
+scipy
+sklearn
