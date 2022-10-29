@@ -5,7 +5,7 @@ deps:
 	pip -q install -r req.txt
 
 data:
-	python 0datagen.py 100 0.3 10 distancedata
+	python 0datagen.py --n_nodes=100 -gSTD=0.3 --nlosMAX=10 distancedata
 
 black:
 	black *.py

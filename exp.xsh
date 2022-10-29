@@ -4,7 +4,7 @@ from pathlib import Path
 datadir = "distancedata"
 
 def generatedata():
-	python 0datagen.py 500 0.1 0 @(datadir)
+	python 0datagen.py --n_nodes=500 --gSTD=0.1 --nlosMAX=0 @(datadir)
 
 
 def process():
