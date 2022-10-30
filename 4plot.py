@@ -18,11 +18,11 @@ def main(inputdir):
 
     error = RMSE(groundtruth, predicted)
     error = round(error, 5)
-    sns.scatterplot(
-        x=groundtruth[:, 0], y=groundtruth[:, 1], label="gt", marker="+", alpha=1
+    plt.scatter(
+        x=groundtruth[:, 0], y=groundtruth[:, 1], label="gt", marker=".",  color='orange', alpha=1, 
     )
-    sns.scatterplot(
-        x=predicted[:, 0], y=predicted[:, 1], label="pred", markers="o", alpha=0.3
+    plt.scatter(
+        x=predicted[:, 0], y=predicted[:, 1], label="pred", marker="o", facecolors='none', color='green', alpha=1,
     )
     plt.title(f"rmse: {error}")
 
