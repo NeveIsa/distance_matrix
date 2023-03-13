@@ -3,19 +3,31 @@ from scipy.sparse.linalg import svds
 from fire import Fire
 from pathlib import Path
 from loguru import logger
+import tensorly.decomposition as td
 
-
-def lowrank(matrix):
-    u, s, vT = svds(matrix, k=4)
+def lowrank(matrix, rank=4):
+    u, s, vT = svds(matrix, k=rank)
     reduced = u @ np.diag(s) @ vT
     return reduced
+    
+
+def sparsenoise_plus_lowrank(matrix, mask=None, rank=4, sparsity=100):
+    # als
+    # matrix = lowrank(UV) + sparse\
+    m,n = matrix.shape
+    U = np.random.rand(m,rank)
+    V = np.random.rand(rank,n)
+    sparse = np.zeros((m,n))
+
+    #fix sparse and U
+    lrmatrix = matrix - sparse #low rank matrix
+    (w,f) = td.non_negative_parafac(lrmatrix, rank=rank)
+    U,V = f
+    print(U.shape, V.shape)
+    exit()
 
 
-def sparsenoise_plus_lowrank(matrix):
-    pass
-
-
-def main(inputdir, mode="lowrank"):
+def main(inputdir, mode="sparsenoise_plus_lowrank"):
     inputdir = Path(inputdir)
     noisymatrix = np.load(inputdir / "noisyD.npy")
     noisymatrix **= 2  # square it
@@ -25,7 +37,7 @@ def main(inputdir, mode="lowrank"):
 
     elif mode == "sparsenoise_plus_lowrank":
         denoisedmatrix = sparsenoise_plus_lowrank(noisymatrix)
-
+        
     denoisedmatrix[denoisedmatrix < 0] = 0  # project to all positive
     denoisedmatrix **= 0.5  # sqrt it
 

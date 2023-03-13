@@ -5,7 +5,7 @@ from loguru import logger
 import yaml
 
 
-def generate(n_nodes, gSTD, nlosMAX, outputdir):
+def generate(n_nodes, gSTD, nlosMAX, nlosPERCENT, outputdir):
     outputdir = Path(outputdir) / f"nodes{n_nodes}g{gSTD}nlos{nlosMAX}"
     if not outputdir.exists():
         logger.info(f"creating {outputdir}")
@@ -23,7 +23,7 @@ def generate(n_nodes, gSTD, nlosMAX, outputdir):
                 D[i, j] = D[j, i] = np.linalg.norm(X[i, :] - X[j, :])
                 nlosnoise = (
                     np.random.uniform(low=0, high=nlosMAX)
-                    if np.random.rand() > 0.1
+                    if np.random.rand() > nlosPERCENT
                     else 0
                 )
                 NLOS_D[i, j] = NLOS_D[j, i] = nlosnoise + D[i, j]
