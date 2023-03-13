@@ -5,7 +5,7 @@ from pathlib import Path
 from loguru import logger
 import tensorly.decomposition as td
 
-def lowrank(matrix, rank=4):
+def lowrank(matrix, mask, rank=4):
     u, s, vT = svds(matrix, k=rank)
     reduced = u @ np.diag(s) @ vT
     return reduced
@@ -30,13 +30,14 @@ def sparsenoise_plus_lowrank(matrix, mask=None, rank=4, sparsity=100):
 def main(inputdir, mode="sparsenoise_plus_lowrank"):
     inputdir = Path(inputdir)
     noisymatrix = np.load(inputdir / "noisyD.npy")
+    mask = np.load(inputdir / "mask.npy")
     noisymatrix **= 2  # square it
 
     if mode == "lowrank":
-        denoisedmatrix = lowrank(noisymatrix)
+        denoisedmatrix = lowrank(noisymatrix, mask=mask)
 
     elif mode == "sparsenoise_plus_lowrank":
-        denoisedmatrix = sparsenoise_plus_lowrank(noisymatrix)
+        denoisedmatrix = sparsenoise_plus_lowrank(noisymatrix, mask=mask)
         
     denoisedmatrix[denoisedmatrix < 0] = 0  # project to all positive
     denoisedmatrix **= 0.5  # sqrt it

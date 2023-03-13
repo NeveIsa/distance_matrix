@@ -4,7 +4,7 @@ from pathlib import Path
 datadir = "distancedata"
 
 def generatedata():
-	python 0datagen.py --n_nodes=500 --gSTD=0.1 --nlosPERCENT=10 --nlosMAX=0 @(datadir)
+	python 0datagen.py --n_nodes=500 --gSTD=0.1 --nlosPERCENT=10 --nlosMAX=0 --maskmissPERCENT=50 --outputdir=@(datadir)
 
 
 def process():
@@ -12,7 +12,7 @@ def process():
 	dataset = glob( str(Path(datadir)/"*")  )
 	for ds in dataset:
 		print(f"Processing -> {ds}")				
-		python 1denoise.py @(ds)
+		python 1denoise.py --inputdir=@(ds)
 		exit(0)
 		python 2mds.py @(ds)
 		python 3align.py @(ds)
