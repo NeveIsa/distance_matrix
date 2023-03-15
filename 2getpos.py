@@ -22,6 +22,26 @@ def distance2gram(inputdir):
     np.save(outfile, recoveredX)
     logger.info(f"Saved {outfile}")
 
+def lle(inputdir, k=10):
+    """
+        k = k in k-nearest neighbours
+    """
+    inputdir = Path(inputdir)
+    
+    D = np.load(inputdir / "1denoisedD.npy")
+    X = np.zeros(D.shape)
+       
+    for i in range(D.shape[0]):
+        knn = np.argsort(D[i,:])[:k]
+        if not i in knn: 
+            knn = np.array(knn.tolist()+[i])
+            # d =
 
+def main(inputdir, algo='mds'):
+    if algo=='mds':
+        distance2gram(inputdir)
+    elif algo=='lle':
+        lle(inputdir)
+    
 if __name__ == "__main__":
-    Fire(distance2gram)
+    Fire(main)

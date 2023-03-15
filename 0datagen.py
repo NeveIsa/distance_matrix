@@ -23,7 +23,7 @@ def generate(n_nodes, gSTD, nlosMAX, nlosPERCENT, maskmissPERCENT, outputdir):
                 D[i, j] = D[j, i] = np.linalg.norm(X[i, :] - X[j, :])
                 nlosnoise = (
                     np.random.uniform(low=0, high=nlosMAX)
-                    if np.random.rand() > nlosPERCENT
+                    if np.random.rand() > nlosPERCENT/100
                     else 0
                 )
                 NLOS_D[i, j] = NLOS_D[j, i] = nlosnoise + D[i, j]

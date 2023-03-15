@@ -16,9 +16,9 @@ def lowrank(matrix, mask, rank=4):
     return reduced
     
 
-def sparsenoise_plus_lowrank(matrix, mask=None, rank=4, sparsity=100):
+def sparse_plus_lowrank(matrix, mask=None, rank=4, sparsity=10):
     # als
-    # matrix = lowrank(UV) + sparse\
+    # matrix = lowrank(UV) + sparse
     sparse = np.zeros(matrix.shape)
 
     #sparse and UV
@@ -43,18 +43,47 @@ def sparsenoise_plus_lowrank(matrix, mask=None, rank=4, sparsity=100):
 
     return lrmatrix,sparse
 
-def main(inputdir, mode="lowrank"):
+def sparse_plus_lowrank2(matrix, rank=4, sparsity=100, lmbda=1, mu=1):
+    lasterr = np.inf
+    ystar = np.zeros_like(matrix)
+    pbar = tqdm(range(1000))
+    for i in pbar:
+        # low rank subproblem
+        dbar = matrix - ystar
+        U,S,Vt = svds(dbar, k=rank)
+        lrmatrix = U@np.diag(S)@Vt
+        xstar = lrmatrix/(lmbda+1)
+
+        # sparse subproblem
+        dtilde = matrix - xstar
+        cutoff = sorted(dtilde.flatten(), reverse=True)[sparsity]
+        sstar = (dtilde>cutoff)*1
+        ystar = sstar*dtilde/(1+mu)
+
+        err = tl.norm(matrix - xstar - ystar)**2 + lmbda*tl.norm(xstar)**2 + mu*tl.norm(ystar)**2
+        relerr = (lasterr - err)/err
+        lasterr = err
+        pbar.set_postfix({'relerr':relerr})
+        if err>0 and relerr<1e-9: break
+    
+    
+    return lrmatrix, ystar
+
+def main(inputdir, algo="sparse_plus_lowrank"):
     inputdir = Path(inputdir)
     noisymatrix = np.load(inputdir / "noisyD.npy")
     mask = np.load(inputdir / "mask.npy")
     noisymatrix **= 2  # square it
     noisymatrix *= mask
     
-    if mode == "lowrank":
+    if algo == "lowrank":
         denoisedmatrix = lowrank(noisymatrix, mask=mask)
 
-    elif mode == "sparsenoise_plus_lowrank":
-        denoisedmatrix,sparse = sparsenoise_plus_lowrank(noisymatrix, mask=mask)
+    elif algo == "sparse_plus_lowrank":
+        invmask = 1 - mask
+        noisymatrix[invmask] = 10 # set the unkown to a high value
+        denoisedmatrix,sparse = sparse_plus_lowrank2(noisymatrix, sparsity=50)
+        # print(denoisedmatrix)
         
     denoisedmatrix[denoisedmatrix < 0] = 0  # project to all positive
     denoisedmatrix **= 0.5  # sqrt it

@@ -4,7 +4,7 @@ import seaborn as sns
 from fire import Fire
 from pathlib import Path
 from loguru import logger
-
+import yaml
 
 def RMSE(X, Y):
     return np.linalg.norm(X - Y) / X.shape[0]
@@ -27,6 +27,9 @@ def main(inputdir):
     plt.title(f"rmse: {error}")
 
     outfile = inputdir / "4compare.png"
+
+    info = yaml.safe_load(open(inputdir/"info.yml").read())
+    plt.title(info)
     plt.savefig(outfile)
 
     logger.info(f"plotted {outfile}")
