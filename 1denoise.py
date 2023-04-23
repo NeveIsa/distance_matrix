@@ -43,7 +43,7 @@ def sparse_plus_lowrank(matrix, mask=None, rank=4, sparsity=10):
 
     return lrmatrix,sparse
 
-def sparse_plus_lowrank2(matrix, rank=4, sparsity=100, lmbda=1, mu=1):
+def sparse_plus_lowrank2(matrix, rank=4, sparsity=100, lmbda=0.01, mu=0.1):
     lasterr = np.inf
     ystar = np.zeros_like(matrix)
     pbar = tqdm(range(1000))
@@ -67,7 +67,7 @@ def sparse_plus_lowrank2(matrix, rank=4, sparsity=100, lmbda=1, mu=1):
         if err>0 and relerr<1e-9: break
     
     
-    return lrmatrix, ystar
+    return xstar, ystar
 
 def main(inputdir, algo="sparse_plus_lowrank"):
     inputdir = Path(inputdir)
